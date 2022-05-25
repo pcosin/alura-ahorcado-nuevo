@@ -1,15 +1,23 @@
 const btnStart = document.querySelector('.nuevo-juego');
-const divDom = document.querySelector('.main-text')
-const divWrongDom = document.querySelector('.wrong-words')
+const divDom = document.querySelector('.main-text');
+const divWrongDom = document.querySelector('.wrong-words');
 
-let canvas = document.querySelector('.canvas')
+let screen = document.querySelector('canvas');
+let brush = screen.getContext('2d');
+
+const paint = () => {
+    brush.fillStyle = "black";
+    brush.fillRect(0,0,600,400)
+}
+
+paint()
 
 
 let words = ["hola", "calor", "verdura", "fiesta", "amor", "relato"];
 let randomWord = []
 let wordPrint
 let correct = 0;
-let incorrect
+let incorrect = 0;
 
 // Function Start Game
 
@@ -34,9 +42,7 @@ const keyPress = event => {
     let letterPress = event.key.toUpperCase();
    
     if(letterPress.match(/^[a-zñ]$/i) && randomWord.includes(letterPress)) {  
-        console.log(randomWord)
         correctletter(letterPress)
-
     }
     else {
         wrongWord(letterPress) 
