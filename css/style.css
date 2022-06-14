@@ -196,7 +196,7 @@ select {
 
 canvas {
   width: 100%;
-  height: 400px;
+  height: 350px;
 }
 
 .main-text {
@@ -254,6 +254,17 @@ canvas {
 .btn:focus {
   box-shadow: 0 0.5em 0.5em -0.4em var(--color-dark-blue);
   transform: translateY(-0.25em);
+}
+
+.disabled {
+  pointer-events: none;
+  background: #e5e5e5;
+  outline: none;
+}
+
+.cancel-class {
+  background-color: #0a3871;
+  color: #fff;
 }
 
 /* ------------------- */

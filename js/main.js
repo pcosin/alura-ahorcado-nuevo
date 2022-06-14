@@ -1,9 +1,28 @@
 const btnStart = document.querySelector(".nuevo-juego");
+const btnCancel = document.querySelector(".cancelar");
 const divDom = document.querySelector(".main-text");
 const divWrongDom = document.querySelector(".wrong-words");
 
-let words = ["hola", "calor", "verdura", "fiesta", "amor", "relato"];
+let words = [
+  "hola",
+  "calor",
+  "verdura",
+  "fiesta",
+  "amor",
+  "relato",
+  "ayer",
+  "francia",
+  "largo",
+  "locro",
+  "lechga",
+  "diario",
+  "mandarina",
+  "bruno",
+  "emma",
+];
 let randomWord = [];
+let repeatLetter = [];
+
 let wordPrint;
 let correct = 0;
 let incorrect = 0;
@@ -19,6 +38,7 @@ const paint = () => {
   brush.lineTo(200, 110);
   brush.closePath();
   brush.stroke();
+  // brush.fillText("Hello World", 100, 50);
 
   if (incorrect === 1) {
     brush.strokeStyle = "#000000";
@@ -93,11 +113,19 @@ const paint = () => {
   }
 };
 
-paint();
-
 // Function Start Game
 
 function startGame() {
+  btnStart.classList.add("disabled");
+  btnCancel.classList.add("cancel-class");
+
+  repeatLetter = [];
+  correct = 0;
+  incorrect = 0;
+  divDom.innerHTML = "";
+
+  // usedLettersElement.innerHTML = "";
+
   randomWord = words[Math.floor(Math.random() * words.length)].toUpperCase();
   selectWord = randomWord.split("");
 
@@ -109,15 +137,23 @@ function startGame() {
     div.appendChild(wordPrint);
     divDom.appendChild(div);
   }
+  brush.clearRect(0, 0, screen.width, screen.height);
+
+  // Add event listener on keypress
+  document.addEventListener("keypress", keyPress);
+  paint();
 }
 
 const keyPress = (event) => {
   let letterPress = event.key.toUpperCase();
-
-  if (letterPress.match(/^[a-zñ]$/i) && randomWord.includes(letterPress)) {
+  if (repeatLetter.includes(letterPress)) {
+    alert("Letra ya ingresada. Intentelo con otra");
+  } else if (letterPress.match(/^[a-zñ]$/i) && randomWord.includes(letterPress)) {
     correctletter(letterPress);
+    repeatLetter.push(letterPress);
   } else {
     wrongWord(letterPress);
+    repeatLetter.push(letterPress);
   }
 };
 
@@ -127,11 +163,12 @@ const correctletter = (letter) => {
     if (divDomP[i].innerHTML === letter) {
       divDomP[i].classList.add("show-word");
       correct++;
-      console.log(correct);
     }
   }
   if (correct === selectWord.length) {
-    console.log("ha ganado");
+    brush.clearRect(0, 0, screen.width, screen.height);
+    brush.fillText("Ha ganado!", 100, 100);
+
     endGame();
   }
 };
@@ -146,17 +183,19 @@ const wrongWord = (letter) => {
   paint();
 
   if (incorrect === 9) {
-    console.log("ha perdido");
-    console.log(randomWord);
+    brush.clearRect(0, 0, screen.width, screen.height);
+    brush.fillText("Usted ha perdido", 100, 100);
     endGame();
   }
 };
 
 const endGame = () => {
   document.removeEventListener("keypress", keyPress);
+  btnStart.classList.remove("disabled");
+  btnCancel.classList.remove("cancel-class");
+  divDom.innerHTML = "";
+  divWrongDom.innerHTML = "";
 };
 
 btnStart.addEventListener("click", startGame);
-
-// Add event listener on keypress
-document.addEventListener("keypress", keyPress);
+btnCancel.addEventListener("click", endGame);
