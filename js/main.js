@@ -155,6 +155,9 @@ const keyPress = (event) => {
     wrongWord(letterPress);
     repeatLetter.push(letterPress);
   }
+  if (event.keyCode == 13) {
+    event.preventDefault();
+  }
 };
 
 const correctletter = (letter) => {
@@ -167,7 +170,9 @@ const correctletter = (letter) => {
   }
   if (correct === selectWord.length) {
     brush.clearRect(0, 0, screen.width, screen.height);
-    brush.fillText("Ha ganado!", 100, 100);
+    brush.font = "bold 28px serif";
+    brush.fillStyle = "#559999";
+    brush.fillText("Ha ganado!", 50, 100);
 
     endGame();
   }
@@ -184,7 +189,9 @@ const wrongWord = (letter) => {
 
   if (incorrect === 9) {
     brush.clearRect(0, 0, screen.width, screen.height);
-    brush.fillText("Usted ha perdido", 100, 100);
+    brush.font = "bold 18px serif";
+    brush.fillStyle = "#ff0000";
+    brush.fillText(`Ha perdido. Era ${randomWord}`, 50, 50);
     endGame();
   }
 };
