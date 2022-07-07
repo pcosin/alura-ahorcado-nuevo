@@ -3,46 +3,39 @@ const btnCancel = document.querySelector(".cancelar");
 const divDom = document.querySelector(".main-text");
 const divWrongDom = document.querySelector(".wrong-words");
 
-let words = [
-  "hola",
-  "calor",
-  "verdura",
-  "fiesta",
-  "amor",
-  "relato",
-  "ayer",
-  "francia",
-  "largo",
-  "locro",
-  "lechga",
-  "diario",
-  "mandarina",
-  "bruno",
-  "emma",
-];
-let randomWord = [];
-let repeatLetter = [];
+const catchWords = async () => {
+  const fetchingData = await fetch("https://palabras-aleatorias-public-api.herokuapp.com/random");
+  const toJSONdata = await fetchingData.json();
+  riddleWord = toJSONdata.body.Word;
+  newWord(riddleWord);
+  randomWord.push(riddleWord);
+};
 
+let riddleWord;
+let randomWord = [];
+let randomWordUpper;
+let repeatLetter = [];
+let selectWord;
 let wordPrint;
+
 let correct = 0;
 let incorrect = 0;
 
-let screen = document.querySelector("canvas");
-let brush = screen.getContext("2d");
+const screen = document.querySelector("canvas");
+const brush = screen.getContext("2d");
 
 const paint = () => {
   brush.strokeStyle = "#000000";
-  brush.lineWidth = 2;
+  brush.lineWidth = 1;
   brush.beginPath();
   brush.moveTo(30, 110);
   brush.lineTo(200, 110);
   brush.closePath();
   brush.stroke();
-  // brush.fillText("Hello World", 100, 50);
 
   if (incorrect === 1) {
     brush.strokeStyle = "#000000";
-    brush.lineWidth = 2;
+    brush.lineWidth = 1;
     brush.beginPath;
     brush.moveTo(45, 110);
     brush.lineTo(45, 5);
@@ -50,7 +43,7 @@ const paint = () => {
     brush.stroke();
   } else if (incorrect === 2) {
     brush.strokeStyle = "#000000";
-    brush.lineWidth = 2;
+    brush.lineWidth = 1;
     brush.beginPath();
     brush.moveTo(45, 5);
     brush.lineTo(130, 5);
@@ -58,7 +51,7 @@ const paint = () => {
     brush.stroke();
   } else if (incorrect === 3) {
     brush.strokeStyle = "#000000";
-    brush.lineWidth = 2;
+    brush.lineWidth = 1;
     brush.beginPath();
     brush.moveTo(130, 5);
     brush.lineTo(130, 20);
@@ -66,13 +59,13 @@ const paint = () => {
     brush.stroke();
   } else if (incorrect === 4) {
     brush.strokeStyle = "#000000";
-    brush.lineWidth = 2;
+    brush.lineWidth = 1;
     brush.beginPath();
     brush.arc(130, 30, 10, 0, 2 * Math.PI);
     brush.stroke();
   } else if (incorrect === 5) {
     brush.strokeStyle = "#000000";
-    brush.lineWidth = 2;
+    brush.lineWidth = 1;
     brush.beginPath();
     brush.moveTo(130, 40);
     brush.lineTo(130, 80);
@@ -80,7 +73,7 @@ const paint = () => {
     brush.stroke();
   } else if (incorrect === 6) {
     brush.strokeStyle = "#000000";
-    brush.lineWidth = 2;
+    brush.lineWidth = 1;
     brush.beginPath();
     brush.moveTo(130, 80);
     brush.lineTo(120, 100);
@@ -88,7 +81,7 @@ const paint = () => {
     brush.stroke();
   } else if (incorrect === 7) {
     brush.strokeStyle = "#000000";
-    brush.lineWidth = 2;
+    brush.lineWidth = 1;
     brush.beginPath();
     brush.moveTo(130, 80);
     brush.lineTo(140, 100);
@@ -96,7 +89,7 @@ const paint = () => {
     brush.stroke();
   } else if (incorrect === 8) {
     brush.strokeStyle = "#000000";
-    brush.lineWidth = 2;
+    brush.lineWidth = 1;
     brush.beginPath();
     brush.moveTo(130, 50);
     brush.lineTo(150, 70);
@@ -104,7 +97,7 @@ const paint = () => {
     brush.stroke();
   } else if (incorrect === 9) {
     brush.strokeStyle = "#000000";
-    brush.lineWidth = 2;
+    brush.lineWidth = 1;
     brush.beginPath();
     brush.moveTo(130, 50);
     brush.lineTo(110, 70);
@@ -116,6 +109,8 @@ const paint = () => {
 // Function Start Game
 
 function startGame() {
+  catchWords();
+  paint();
   btnStart.classList.add("disabled");
   btnCancel.classList.add("cancel-class");
 
@@ -124,38 +119,43 @@ function startGame() {
   incorrect = 0;
   divDom.innerHTML = "";
 
-  // usedLettersElement.innerHTML = "";
-
-  randomWord = words[Math.floor(Math.random() * words.length)].toUpperCase();
-  selectWord = randomWord.split("");
-
-  for (let i = 0; i < randomWord.length; i++) {
-    let div = document.createElement("div");
-    wordPrint = document.createElement("p");
-    wordPrint.className = "hide-word";
-    wordPrint.textContent = randomWord[i];
-    div.appendChild(wordPrint);
-    divDom.appendChild(div);
-  }
   brush.clearRect(0, 0, screen.width, screen.height);
 
   // Add event listener on keypress
   document.addEventListener("keypress", keyPress);
-  paint();
 }
+
+const newWord = (randomWord) => {
+  randomWordUpper = randomWord.toUpperCase();
+  selectWord = randomWordUpper.split("");
+  printLetter(randomWordUpper);
+};
+
+const printLetter = (word) => {
+  for (let i = 0; i < word.length; i++) {
+    let div = document.createElement("div");
+    wordPrint = document.createElement("p");
+    wordPrint.className = "hide-word";
+    wordPrint.textContent = word[i];
+    div.appendChild(wordPrint);
+    divDom.appendChild(div);
+  }
+};
 
 const keyPress = (event) => {
   let letterPress = event.key.toUpperCase();
   if (repeatLetter.includes(letterPress)) {
     alert("Letra ya ingresada. Intentelo con otra");
-  } else if (letterPress.match(/^[a-zñ]$/i) && randomWord.includes(letterPress)) {
+  } else if (letterPress.match(/^[a-zñ]$/i) && randomWordUpper.includes(letterPress)) {
+    console.log(letterPress);
+
     correctletter(letterPress);
     repeatLetter.push(letterPress);
   } else {
     wrongWord(letterPress);
     repeatLetter.push(letterPress);
   }
-  if (event.keyCode == 13) {
+  if (event.keyCode == 13 || event.keyCode == 2) {
     event.preventDefault();
   }
 };
@@ -192,6 +192,7 @@ const wrongWord = (letter) => {
     brush.font = "bold 18px serif";
     brush.fillStyle = "#ff0000";
     brush.fillText(`Ha perdido. Era ${randomWord}`, 50, 50);
+    console.log(randomWord);
     endGame();
   }
 };
