@@ -106,6 +106,20 @@ const paint = () => {
   }
 };
 
+const showAlert = () => {
+  Swal.fire({
+    title: "<strong>¿Cómo se juega?</strong>",
+    // icon: "info",
+    html: `Adivina la palabra secreta. 
+  Tienes 9 intentos`,
+    focusConfirm: false,
+    confirmButtonText: '<i class="fa fa-thumbs-up"></i> OK',
+    confirmButtonAriaLabel: "Thumbs up, great!",
+    cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
+    cancelButtonAriaLabel: "Thumbs down",
+  });
+};
+
 // Function Start Game
 
 function startGame() {
@@ -145,10 +159,8 @@ const printLetter = (word) => {
 const keyPress = (event) => {
   let letterPress = event.key.toUpperCase();
   if (repeatLetter.includes(letterPress)) {
-    alert("Letra ya ingresada. Intentelo con otra");
+    Swal.fire("Letra ya ingresada. Intentelo con otra");
   } else if (letterPress.match(/^[a-zñ]$/i) && randomWordUpper.includes(letterPress)) {
-    console.log(letterPress);
-
     correctletter(letterPress);
     repeatLetter.push(letterPress);
   } else {
@@ -169,10 +181,10 @@ const correctletter = (letter) => {
     }
   }
   if (correct === selectWord.length) {
-    brush.clearRect(0, 0, screen.width, screen.height);
-    brush.font = "bold 28px serif";
-    brush.fillStyle = "#559999";
-    brush.fillText("Ha ganado!", 50, 100);
+    Swal.fire({
+      text: `Excelente, la palabra era ${riddleWord}`,
+      color: "#006666",
+    });
 
     endGame();
   }
@@ -188,11 +200,11 @@ const wrongWord = (letter) => {
   paint();
 
   if (incorrect === 9) {
-    brush.clearRect(0, 0, screen.width, screen.height);
-    brush.font = "bold 18px serif";
-    brush.fillStyle = "#ff0000";
-    brush.fillText(`Ha perdido. Era ${randomWord}`, 50, 50);
-    console.log(randomWord);
+    Swal.fire({
+      text: `Has perdido, la palabra era ${riddleWord}`,
+      color: "#ff0000",
+    });
+
     endGame();
   }
 };
@@ -205,5 +217,6 @@ const endGame = () => {
   divWrongDom.innerHTML = "";
 };
 
+window.onload = showAlert();
 btnStart.addEventListener("click", startGame);
 btnCancel.addEventListener("click", endGame);
